@@ -1,3 +1,7 @@
 <resources>
 	<string name="app_name">ABC2017A_Client</string>
+	<string name="Acc">Acceleration</string>
+	<string name="Bre">Break / Reverse</string>
+	<string name="Left">Left</string>
+	<string name="Right">Right</string>
 </resources>
