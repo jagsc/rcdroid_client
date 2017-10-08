@@ -19,9 +19,8 @@ public class MainActivity extends AppCompatActivity implements
 	private int speed = 0;
 
 	private void sendAccelSignal()
-	{
-		int speed = 10;
-		Object obj = Arrays.asList("speed"); // 送信内容
+    {
+		Object obj = Arrays.asList(10); // 送信内容
 		String address = "192.168.1.5"; // 受信側端末の実際のアドレスに書き換える
 		int port = 12345;                // 受信側と揃える
 		UDPObjectTransfer.send(obj, address, port);
@@ -29,8 +28,7 @@ public class MainActivity extends AppCompatActivity implements
 
 	private void sendBackSignal()
 	{
-		int speed = -5;
-		Object obj = Arrays.asList("speed");
+		Object obj = Arrays.asList(-5);
 		String address = "192.168.1.5";
 		int port = 12345;
 		UDPObjectTransfer.send(obj, address, port);
@@ -43,30 +41,29 @@ public class MainActivity extends AppCompatActivity implements
 		* 	お願いします*/
 
 		//int speed = 5/Math.cos(Math.toRadians(45));	なんかエラーでダメだった
-		int speed = 0;	//暫定
-		Object obj = Arrays.asList("speed");
+		Object obj = Arrays.asList(0);
 		String address = "192.168.1.5";
 		int port = 12345;
 		UDPObjectTransfer.send(obj, address, port);
 	}
 
-	private void sendLongAccel()
-	{
-		int speed =+ 10;
-		Object obj = Arrays.asList("speed");
-		String address = "192.168.1.5";
-		int port = 12345;
-		UDPObjectTransfer.send(obj, address, port);
-	}
+	private void sendLongAccel() {
+        Object obj = Arrays.asList(10);
+        String address = "192.168.1.5";
+        int port = 12345;
+        for (; ; ) {
+            UDPObjectTransfer.send(obj, address, port);
+        }
+    }
 
-	private void sendLongBack()
-	{
-		int speed =- 10;
-		Object obj = Arrays.asList("speed");
-		String address = "192.168.1.5";
-		int port = 12345;
-		UDPObjectTransfer.send(obj, address, port);
-	}
+	private void sendLongBack() {
+        Object obj = Arrays.asList(-10);
+        String address = "192.168.1.5";
+        int port = 12345;
+        for (; ; ) {
+            UDPObjectTransfer.send(obj, address, port);
+        }
+    }
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -123,7 +120,7 @@ public class MainActivity extends AppCompatActivity implements
 	}
 
 	/*スピード調整用？
-	* 改良案浮かばずに保留状態*/
+	* 改良案浮かばず*/
 	public boolean onTouch(View view, MotionEvent motionEvent){
 		switch(view.getId()){
 			case R.id.SpeedBar:
