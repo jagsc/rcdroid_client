@@ -31,6 +31,7 @@ public class UDPObjectTransfer {
             byte[] sendData = convertToBytes(obj);
             DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, port);
             clientSocket.send(sendPacket);
+            clientSocket.close();
         }catch(IOException ex) {
         }
     }

@@ -1,133 +1,113 @@
 package jp.android_group.student.abc2017a_client;
 
+import android.os.AsyncTask;
+import android.os.Handler;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.MotionEvent;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.ToggleButton;
 import android.widget.SeekBar;
 
+import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.util.Arrays;
 
-public class MainActivity extends AppCompatActivity implements
-		View.OnClickListener, View.OnLongClickListener, View.OnTouchListener {
-	private int speed = 0;
+public class MainActivity extends AppCompatActivity{
+	RelativeLayout layout_joystick;
+	ImageView image_joystick, image_border;
+	TextView textView1, textView2, textView3, textView4, textView5;
 
-	private void sendAccelSignal()
-    {
-		Object obj = Arrays.asList(10); // 送信内容
-		String address = "192.168.1.5"; // 受信側端末の実際のアドレスに書き換える
-		int port = 12345;                // 受信側と揃える
-		UDPObjectTransfer.send(obj, address, port);
-	}
+	JoyStickClass js;
 
-	private void sendBackSignal()
-	{
-		Object obj = Arrays.asList(-5);
-		String address = "192.168.1.5";
-		int port = 12345;
-		UDPObjectTransfer.send(obj, address, port);
-	}
-
-	private void sendHandle()
-	{
-		/*	未実装:右左旋回時の挙動とそれに伴うコード
-		* 	なんか識別的なの送ってモータ側で制御出来たら神
-		* 	お願いします*/
-
-		//int speed = 5/Math.cos(Math.toRadians(45));	なんかエラーでダメだった
-		Object obj = Arrays.asList(0);
-		String address = "192.168.1.5";
-		int port = 12345;
-		UDPObjectTransfer.send(obj, address, port);
-	}
-
-	private void sendLongAccel() {
-        Object obj = Arrays.asList(10);
-        String address = "192.168.1.5";
-        int port = 12345;
-        for (; ; ) {
-            UDPObjectTransfer.send(obj, address, port);
-        }
-    }
-
-	private void sendLongBack() {
-        Object obj = Arrays.asList(-10);
-        String address = "192.168.1.5";
-        int port = 12345;
-        for (; ; ) {
-            UDPObjectTransfer.send(obj, address, port);
-        }
-    }
+	private Handler mHandler = new Handler();
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().permitAll().build());
 		setContentView(R.layout.activity_main);
 
-		Button accelBtn=(Button)findViewById(R.id.AccelButton);
-		Button backBtn=(Button)findViewById(R.id.BackButton);
-		ToggleButton leftBtn=(ToggleButton)findViewById(R.id.LeftButton);
-		ToggleButton rightBtn=(ToggleButton)findViewById(R.id.RightButton);
-		SeekBar speedBar=(SeekBar) findViewById(R.id.SpeedBar);
+		textView1 = (TextView)findViewById(R.id.textView1);
+		textView2 = (TextView)findViewById(R.id.textView2);
+		textView3 = (TextView)findViewById(R.id.textView3);
+		textView4 = (TextView)findViewById(R.id.textView4);
+		textView5 = (TextView)findViewById(R.id.textView5);
 
-		accelBtn.setOnClickListener(this);
-		backBtn.setOnClickListener(this);
-		leftBtn.setOnClickListener(this);
-		rightBtn.setOnClickListener(this);
+		layout_joystick = (RelativeLayout)findViewById(R.id.layout_joystick);
 
-		accelBtn.setOnLongClickListener(this);
-		backBtn.setOnLongClickListener(this);
+		js = new JoyStickClass(getApplicationContext(), layout_joystick, R.drawable.image_button);
+		js.setStickSize(150, 150);
+		js.setLayoutSize(500, 500);
+		js.setLayoutAlpha(150);
+		js.setStickAlpha(100);
+		js.setOffset(90);
+		js.setMinimumDistance(50);
 
+		mHandler.post(sendControl);
 
-		speedBar.setOnTouchListener(this);
-	}
+		layout_joystick.setOnTouchListener(new View.OnTouchListener() {
+			public boolean onTouch(View arg0, MotionEvent arg1) {
+				js.drawStick(arg1);
+				if(arg1.getAction() == MotionEvent.ACTION_DOWN
+						|| arg1.getAction() == MotionEvent.ACTION_MOVE) {
+					textView1.setText("X : " + String.valueOf(js.getX()));
+					textView2.setText("Y : " + String.valueOf(js.getY()));
+					textView3.setText("Angle : " + String.valueOf(js.getAngle()));
+					textView4.setText("Distance : " + String.valueOf(js.getDistance()));
 
-	public void onClick(View view){
-		switch (view.getId()){
-			case R.id.AccelButton:
-					sendAccelSignal();
-				break;
-			case R.id.BackButton:
-					sendBackSignal();
-				break;
-			case R.id.LeftButton:
-					sendHandle();
-				break;
-			case R.id.RightButton:
-					sendHandle();
-				break;
-		}
-	}
-
-	public boolean onLongClick(View view){
-		switch (view.getId()){
-			case R.id.AccelButton:
-					sendLongAccel();
+					int direction = js.get8Direction();
+					if(direction == JoyStickClass.STICK_UP) {
+						textView5.setText("Direction : Up");
+					} else if(direction == JoyStickClass.STICK_UPRIGHT) {
+						textView5.setText("Direction : Up Right");
+					} else if(direction == JoyStickClass.STICK_RIGHT) {
+						textView5.setText("Direction : Right");
+					} else if(direction == JoyStickClass.STICK_DOWNRIGHT) {
+						textView5.setText("Direction : Down Right");
+					} else if(direction == JoyStickClass.STICK_DOWN) {
+						textView5.setText("Direction : Down");
+					} else if(direction == JoyStickClass.STICK_DOWNLEFT) {
+						textView5.setText("Direction : Down Left");
+					} else if(direction == JoyStickClass.STICK_LEFT) {
+						textView5.setText("Direction : Left");
+					} else if(direction == JoyStickClass.STICK_UPLEFT) {
+						textView5.setText("Direction : Up Left");
+					} else if(direction == JoyStickClass.STICK_NONE) {
+						textView5.setText("Direction : Center");
+					}
+				} else if(arg1.getAction() == MotionEvent.ACTION_UP) {
+					textView1.setText("X :");
+					textView2.setText("Y :");
+					textView3.setText("Angle :");
+					textView4.setText("Distance :");
+					textView5.setText("Direction :");
+				}
 				return true;
-			case R.id.BackButton:
-					sendLongBack();
-				return true;
-			default:
-				return false;
-		}
+			}
+		});
 	}
 
-	/*スピード調整用？
-	* 改良案浮かばず*/
-	public boolean onTouch(View view, MotionEvent motionEvent){
-		switch(view.getId()){
-			case R.id.SpeedBar:
-
-				return false;
-			default:
-				return false;
-		}
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		mHandler.removeCallbacks(sendControl);
 	}
+
+	private Runnable sendControl = new Runnable() {
+		@Override
+		public void run() {
+			SendControlClass sendctl = new SendControlClass(mHandler,js,sendControl);
+			sendctl.execute();
+		}
+	};
+
+
 }
