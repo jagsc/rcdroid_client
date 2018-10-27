@@ -1,4 +1,4 @@
-package jp.android_group.student.abc2017a_client;
+package jp.android_group.student.rcdroid_client;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

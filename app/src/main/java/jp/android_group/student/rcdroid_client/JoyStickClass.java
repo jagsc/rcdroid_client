@@ -1,4 +1,4 @@
-package jp.android_group.student.abc2017a_client;
+package jp.android_group.student.rcdroid_client;
 
 /**
  * Created by hayatokimura on 2017/10/14.

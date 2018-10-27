@@ -1,4 +1,4 @@
-package jp.android_group.student.abc2017a_client;
+package jp.android_group.student.rcdroid_client;
 
 import android.os.AsyncTask;
 import android.os.Handler;
@@ -24,7 +24,7 @@ public class SendControlClass extends AsyncTask<Void, Void, Object> {
     @Override
     protected Object doInBackground(Void... params) {
 
-        Object obj = Arrays.asList(getSignal(js.getX()),getSignal(-js.getY())); // 送信内容
+        Object obj = Arrays.asList(getSignal(-js.getX()),getSignal(-js.getY())); // 送信内容
         String address = "192.168.43.104";//"192.168.0.29"; // 受信側端末の実際のアドレスに書き換える
         int port = 12345;
         UDPObjectTransfer.send(obj,address,port);

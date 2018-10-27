@@ -1,25 +1,13 @@
-package jp.android_group.student.abc2017a_client;
+package jp.android_group.student.rcdroid_client;
 
-import android.os.AsyncTask;
 import android.os.Handler;
-import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.MotionEvent;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.ToggleButton;
-import android.widget.SeekBar;
-
-import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity{
 	RelativeLayout layout_joystick;

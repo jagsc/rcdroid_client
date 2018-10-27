@@ -2,9 +2,9 @@ apply plugin: 'com.android.application'
 
 android {
 	compileSdkVersion 25
-	buildToolsVersion "25.0.2"
+	buildToolsVersion '27.0.3'
 	defaultConfig {
-		applicationId "jp.android_group.student.abc2017a_client"
+		applicationId "jp.android_group.student.rcdroid_client"
 		minSdkVersion 23
 		targetSdkVersion 25
 		versionCode 1
